@@ -1,12 +1,19 @@
 EXTERNAL_DIR := ./external
-ARCADE_DOCS_DIR := $(EXTERNAL_DIR)/arcade-docs
-ARCADE_DOCS_REPO := git@github.com:ArcadeAI/docs.git
+AWS_LAMBDA_SCRAPER := helpers/scrapers/aws-lambda-docs/scraper.py
+ARCADE_DOCS_SCRAPER := helpers/scrapers/arcade-docs/scraper.py
 
-.PHONY: build
+.PHONY: build aws-lambda-docs arcade-docs test
 
-build: $(ARCADE_DOCS_DIR)
+build: arcade-docs aws-lambda-docs
 
-$(ARCADE_DOCS_DIR):
-	@mkdir -p $(EXTERNAL_DIR)
-	@echo "Cloning $(ARCADE_DOCS_REPO) into $(ARCADE_DOCS_DIR)..."
-	git clone $(ARCADE_DOCS_REPO) $(ARCADE_DOCS_DIR)
+arcade-docs:
+	@echo "Scraping Arcade documentation..."
+	uv run $(ARCADE_DOCS_SCRAPER)
+
+aws-lambda-docs:
+	@echo "Scraping AWS Lambda documentation..."
+	uv run $(AWS_LAMBDA_SCRAPER)
+
+test:
+	cd helpers/scrapers/aws-lambda-docs && uv run pytest test_aws_lambda_scraper.py -v
+	cd helpers/scrapers/arcade-docs && uv run pytest test_arcade_scraper.py -v
