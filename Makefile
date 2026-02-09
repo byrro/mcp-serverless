@@ -4,7 +4,8 @@ ARCADE_DOCS_SCRAPER := helpers/scrapers/arcade-docs/scraper.py
 
 .PHONY: build aws-lambda-docs arcade-docs test
 
-build: arcade-docs aws-lambda-docs
+build:
+	$(MAKE) -j arcade-docs aws-lambda-docs
 
 arcade-docs:
 	@echo "Scraping Arcade documentation..."
